@@ -15,8 +15,8 @@ export function App() {
     <>
       <table>
           {options.map(option => <tr key={option.identifier}>
-              <td>{option.identifier}</td>
-              <td>{option.name}</td>
+              <td className="items-start">{option.identifier}</td>
+              <td className="text-left pl-4">{option.name}</td>
           </tr>)}
       </table>
     </>
