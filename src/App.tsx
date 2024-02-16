@@ -4,32 +4,31 @@ import { options } from "./options.ts";
 
 type Rank = number & { __brand: "Rank" };
 
-const rank = (i: number) => i as Rank;
+const asRank = (i: number) => i as Rank;
 
 type Pick = {
   identifier: string;
   person: string;
-  rank: Rank;
+  rank: Rank | "not picked";
 };
 
-const allPicks: Pick[] = Object.entries(preferences).flatMap(([person, picks]) => {
-  return picks.map((identifier, index) => {
+const optionsWithPicks = options.map((option) => {
+  const picks: Pick [] = Object.entries(preferences).map(([person, picks]) => {
+    const index = picks.findIndex(
+      (identifier) => identifier === option.identifier,
+    );
+    const rank = index === -1 ? "not picked" : asRank(index);
     return {
       person,
-      identifier,
-      rank: rank(index),
+      rank,
+      identifier: option.identifier
     };
   });
-});
 
-const optionsWithPicks = options.map((option) => {
-  const picks = allPicks.filter(
-    (pick) => pick.identifier === option.identifier,
-  );
   return {
     ...option,
-    picks,
-  };
+    picks
+  }
 });
 
 const participants = Object.keys(preferences);
@@ -45,15 +44,18 @@ export function App() {
               <td>{participant}</td>
             ))}
             <td>Identifier</td>
-            <td className='text-left pl-4'>Title</td>
+            <td className="text-left pl-4">Title</td>
           </tr>
         </thead>
         <tbody>
           {optionsWithPicks.map((option) => (
             <tr key={option.identifier}>
               {participants.map((participant) => {
-                const maybePick = option.picks.find(pick => pick.person === participant);
-                return <td>{maybePick? maybePick.rank: ''}</td>;
+                const maybePick = option.picks.find(
+                  (pick) => pick.person === participant,
+                );
+
+                return <td>{maybePick!== undefined && maybePick.rank !== 'not picked' ? maybePick.rank : ""}</td>;
               })}
               <td className="items-start">{option.identifier}</td>
               <td className="text-left pl-4">{option.name}</td>
