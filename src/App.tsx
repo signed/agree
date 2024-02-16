@@ -23,12 +23,12 @@ const calculateScore = (option: OptionWithPicks): Score => {
   }, 0 as Score);
 };
 
-const optionsWithPicks = options.map((option) => {
+const scoredOptions = options.map((option) => {
   const picks: Pick[] = Object.entries(preferences).map(([person, picks]) => {
     const index = picks.findIndex(
       (identifier) => identifier === option.identifier,
     );
-    const rank = index === -1 ? "not picked" : asRank(index);
+    const rank = index === -1 ? "not picked" : asRank(index + 1);
     return {
       person,
       rank,
@@ -37,8 +37,8 @@ const optionsWithPicks = options.map((option) => {
   });
   const optionWithPicks = {
     ...option,
-    picks
-  }
+    picks,
+  };
 
   const score = calculateScore(optionWithPicks);
 
@@ -51,41 +51,44 @@ const optionsWithPicks = options.map((option) => {
 
 const participants = Object.keys(preferences);
 
+const sortedByScore = scoredOptions.sort((a, b) => {
+  return a.score - b.score;
+});
+
 export function App() {
   return (
     <>
-      <ul></ul>
       <table>
         <thead>
           <tr>
             {participants.map((participant) => (
               <td>{participant}</td>
             ))}
-            <td>Score</td>
-            <td>Identifier</td>
+            <td className="pl-4">Score</td>
             <td className="text-left pl-4">Title</td>
+            <td>Identifier</td>
           </tr>
         </thead>
         <tbody>
-          {optionsWithPicks.map((option) => (
-            <tr key={option.identifier}>
-              {participants.map((participant) => {
-                const maybePick = option.picks.find(
-                  (pick) => pick.person === participant,
-                );
+          {sortedByScore.map((option) => (
+              <tr key={option.identifier} className="border-b-2">
+                {participants.map((participant) => {
+                  const maybePick = option.picks.find(
+                      (pick) => pick.person === participant,
+                  );
 
-                return (
-                  <td>
-                    {maybePick !== undefined && maybePick.rank !== "not picked"
-                      ? maybePick.rank
-                      : ""}
-                  </td>
-                );
-              })}
-              <td>{option.score}</td>
-              <td className="items-start">{option.identifier}</td>
-              <td className="text-left pl-4">{option.name}</td>
-            </tr>
+                  return (
+                      <td>
+                        {maybePick !== undefined && maybePick.rank !== "not picked"
+                            ? maybePick.rank
+                            : ""}
+                      </td>
+                  );
+                })}
+                <td className="pl-4">{option.score}</td>
+                <td className="text-left pl-4">{option.name}</td>
+                <td className="items-start">{option.identifier}</td>
+              </tr>
           ))}
         </tbody>
       </table>
