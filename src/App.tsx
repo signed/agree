@@ -13,7 +13,7 @@ type Pick = {
 };
 
 const optionsWithPicks = options.map((option) => {
-  const picks: Pick [] = Object.entries(preferences).map(([person, picks]) => {
+  const picks: Pick[] = Object.entries(preferences).map(([person, picks]) => {
     const index = picks.findIndex(
       (identifier) => identifier === option.identifier,
     );
@@ -21,14 +21,14 @@ const optionsWithPicks = options.map((option) => {
     return {
       person,
       rank,
-      identifier: option.identifier
+      identifier: option.identifier,
     };
   });
 
   return {
     ...option,
-    picks
-  }
+    picks,
+  };
 });
 
 const participants = Object.keys(preferences);
@@ -55,7 +55,13 @@ export function App() {
                   (pick) => pick.person === participant,
                 );
 
-                return <td>{maybePick!== undefined && maybePick.rank !== 'not picked' ? maybePick.rank : ""}</td>;
+                return (
+                  <td>
+                    {maybePick !== undefined && maybePick.rank !== "not picked"
+                      ? maybePick.rank
+                      : ""}
+                  </td>
+                );
               })}
               <td className="items-start">{option.identifier}</td>
               <td className="text-left pl-4">{option.name}</td>

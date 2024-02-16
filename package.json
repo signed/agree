@@ -8,11 +8,12 @@
     "dev": "vite",
     "test": "vitest --run",
     "build": "tsc && vite build",
+    "typecheck": "tsc --noEmit",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "format": "prettier --write .",
     "format:check": "prettier . --check",
-    "nitpick": "pnpm test && pnpm lint && pnpm format:check"
+    "nitpick": "pnpm test && pnpm typecheck && pnpm lint && pnpm format:check"
   },
   "dependencies": {
     "react": "18.2.0",
