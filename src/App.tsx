@@ -1,6 +1,6 @@
 import "./App.css";
 import { preferences } from "./preferences.ts";
-import { options } from "./options.ts";
+import { Option, options } from "./options.ts";
 
 type Rank = number & { __brand: "Rank" };
 
@@ -10,6 +10,17 @@ type Pick = {
   identifier: string;
   person: string;
   rank: Rank | "not picked";
+};
+
+type OptionWithPicks = Option & { picks: Pick[] };
+
+type Score = number & { __brand: "Score" };
+
+const calculateScore = (option: OptionWithPicks): Score => {
+  return option.picks.reduce((acc, pick) => {
+    const score = pick.rank === "not picked" ? 17 : pick.rank;
+    return (score + acc) as Score;
+  }, 0 as Score);
 };
 
 const optionsWithPicks = options.map((option) => {
@@ -24,10 +35,17 @@ const optionsWithPicks = options.map((option) => {
       identifier: option.identifier,
     };
   });
+  const optionWithPicks = {
+    ...option,
+    picks
+  }
+
+  const score = calculateScore(optionWithPicks);
 
   return {
     ...option,
     picks,
+    score,
   };
 });
 
@@ -43,6 +61,7 @@ export function App() {
             {participants.map((participant) => (
               <td>{participant}</td>
             ))}
+            <td>Score</td>
             <td>Identifier</td>
             <td className="text-left pl-4">Title</td>
           </tr>
@@ -63,6 +82,7 @@ export function App() {
                   </td>
                 );
               })}
+              <td>{option.score}</td>
               <td className="items-start">{option.identifier}</td>
               <td className="text-left pl-4">{option.name}</td>
             </tr>
