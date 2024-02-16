@@ -1,23 +1,28 @@
+import { preferences } from "./preferences.ts";
+import { options } from "./options.ts";
 import "./App.css";
-import optionsJson from "./../inputs/options.json";
 
-import {z} from 'zod'
-
-const optionSchema = z.object({identifier: z.string(), name: z.string()});
-type Option = z.infer<typeof optionSchema>
-const optionsSchema = z.array(optionSchema);
-
-const options: Option[] = optionsSchema.parse(optionsJson);
-
+const participants = Object.keys(preferences);
 
 export function App() {
   return (
     <>
+      <ul>
+        {participants.map((participant) => (
+          <li key={participant} className="text-left">
+            {participant}
+          </li>
+        ))}
+      </ul>
       <table>
-          {options.map(option => <tr key={option.identifier}>
+        <tbody>
+          {options.map((option) => (
+            <tr key={option.identifier}>
               <td className="items-start">{option.identifier}</td>
               <td className="text-left pl-4">{option.name}</td>
-          </tr>)}
+            </tr>
+          ))}
+        </tbody>
       </table>
     </>
   );
