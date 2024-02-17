@@ -1,7 +1,9 @@
 import "./App.css";
 import { preferences } from "./preferences.ts";
 import { Option, options } from "./options.ts";
-import { asRank, Rank } from "./rank.ts";
+import { asRank, Rank, rankComparator } from "./rank.ts";
+import { useState } from "react";
+import { Comparator } from "./rank.test.ts";
 
 type Pick = {
   identifier: string;
@@ -20,7 +22,9 @@ const calculateScore = (option: OptionWithPicks): Score => {
   }, 0 as Score);
 };
 
-const scoredOptions = options.map((option) => {
+type TableData = OptionWithPicks & { score: Score };
+
+const tableData: TableData[] = options.map((option) => {
   const picks: Pick[] = Object.entries(preferences).map(([person, picks]) => {
     const index = picks.findIndex(
       (identifier) => identifier === option.identifier,
@@ -48,18 +52,37 @@ const scoredOptions = options.map((option) => {
 
 const participants = Object.keys(preferences);
 
-const sortedByScore = scoredOptions.sort((a, b) => {
+const scoreSorter = (a: TableData, b: TableData) => {
   return a.score - b.score;
-});
+};
+
+const sortByParticipantRank = (participant: string) => {
+  return (a: TableData, b: TableData) => {
+    const aPick = a.picks.find((pick) => pick.person === participant);
+    const bPick = b.picks.find((pick) => pick.person === participant);
+    return rankComparator(
+      aPick?.rank ?? "not picked",
+      bPick?.rank ?? "not picked",
+    );
+  };
+};
 
 export function App() {
+  const [sorter, setSorter] = useState<Comparator<TableData>>(
+    () => scoreSorter,
+  );
+
+  const sortedTableData = tableData.sort(sorter);
+
   return (
     <>
       <table>
         <thead>
           <tr>
             {participants.map((participant) => (
-              <td>{participant}</td>
+              <td onClick={() => setSorter(() => sortByParticipantRank(participant))}>
+                {participant}
+              </td>
             ))}
             <td className="pl-4">Score</td>
             <td className="text-left pl-4">Title</td>
@@ -67,25 +90,25 @@ export function App() {
           </tr>
         </thead>
         <tbody>
-          {sortedByScore.map((option) => (
-              <tr key={option.identifier} className="border-b-2">
-                {participants.map((participant) => {
-                  const maybePick = option.picks.find(
-                      (pick) => pick.person === participant,
-                  );
+          {sortedTableData.map((option) => (
+            <tr key={option.identifier} className="border-b-2">
+              {participants.map((participant) => {
+                const maybePick = option.picks.find(
+                  (pick) => pick.person === participant,
+                );
 
-                  return (
-                      <td>
-                        {maybePick !== undefined && maybePick.rank !== "not picked"
-                            ? maybePick.rank
-                            : ""}
-                      </td>
-                  );
-                })}
-                <td className="pl-4">{option.score}</td>
-                <td className="text-left pl-4">{option.name}</td>
-                <td className="items-start">{option.identifier}</td>
-              </tr>
+                return (
+                  <td>
+                    {maybePick !== undefined && maybePick.rank !== "not picked"
+                      ? maybePick.rank
+                      : ""}
+                  </td>
+                );
+              })}
+              <td className="pl-4">{option.score}</td>
+              <td className="text-left pl-4">{option.name}</td>
+              <td className="items-start">{option.identifier}</td>
+            </tr>
           ))}
         </tbody>
       </table>

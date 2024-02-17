@@ -14,7 +14,7 @@ test("sort not picked below actual ranks", () => {
   ).toEqual([2, 43, "not picked"]);
 });
 
-type Comparator<T> = (a: T, b: T) => number
+export type Comparator<T> = (a: T, b: T) => number
 const reverse= <T>(comparator: Comparator<T>): Comparator<T> => (a:T, b:T) => comparator(a,b) *-1
 
 test('reverse sort order', () => {
