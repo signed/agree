@@ -31,9 +31,10 @@ const calculateScore = (option: OptionWithPicks): Score => {
 
 type TableData = OptionWithPicks & { score: Score };
 
-const tableData: TableData[] = options.map((option) => {
-  const picks: Pick[] = Object.entries(preferences).map(([person, picks]) => {
-    const index = picks.findIndex(
+function picksToConsider(option: Option): Pick[] {
+  return Object.entries(preferences).map(([person, allPicks]) => {
+    const picksToConsider =  allPicks.flat()
+    const index = picksToConsider.findIndex(
       (identifier) => identifier === option.identifier,
     );
     const rank = index === -1 ? "not picked" : asRank(index + 1);
@@ -43,6 +44,10 @@ const tableData: TableData[] = options.map((option) => {
       identifier: option.identifier,
     };
   });
+}
+
+const tableData: TableData[] = options.map((option) => {
+  const picks: Pick[] = picksToConsider(option);
   const optionWithPicks = {
     ...option,
     picks,
@@ -82,69 +87,73 @@ export function App() {
   const sortedTableData = tableData.sort(sorter);
 
   return (
-    <>
-      <table>
-        <thead>
+      <>
+        <label htmlFor="shortlist">Shortlist: </label>
+        <input id="shortlist" type="checkbox" defaultChecked={true}/>
+        <label htmlFor="runner up">Runner Up: </label>
+        <input id="runner up" type="checkbox" defaultChecked={true}/>
+        <table>
+          <thead>
           <tr>
             {participants.map((participant) => (
-              <td
-                onClick={() =>
-                  setSorter(() => sortByParticipantRank(participant))
-                }
-              >
-                {participant}
-              </td>
+                <td
+                    onClick={() =>
+                        setSorter(() => sortByParticipantRank(participant))
+                    }
+                >
+                  {participant}
+                </td>
             ))}
             <td
-              className="pl-4"
-              onClick={() => {
-                setSorter(() => scoreSorter);
-              }}
+                className="pl-4"
+                onClick={() => {
+                  setSorter(() => scoreSorter);
+                }}
             >
               Score
             </td>
             <td className="text-left pl-4">Title</td>
             <td>Identifier</td>
           </tr>
-        </thead>
-        <tbody>
+          </thead>
+          <tbody>
           {sortedTableData.map((option) => (
-            <tr key={option.identifier} className="border-b-2">
-              {participants.map((participant) => {
-                const maybePick = option.picks.find(
-                  (pick) => pick.person === participant,
-                );
+              <tr key={option.identifier} className="border-b-2">
+                {participants.map((participant) => {
+                  const maybePick = option.picks.find(
+                      (pick) => pick.person === participant,
+                  );
 
-                return (
-                  <td>
-                    {maybePick !== undefined && maybePick.rank !== "not picked"
-                      ? maybePick.rank
-                      : ""}
-                  </td>
-                );
-              })}
-              <td className="pl-4">{option.score}</td>
-              <td className="text-left pl-4">
-                <Popover>
-                  <PopoverTrigger>{option.name}</PopoverTrigger>
-                  <PopoverContent className="Popover">
-                    <PopoverHeading className='font-bold underline pb-1'>{option.name}</PopoverHeading>
-                    <PopoverDescription>
-                      <p className="border-b-2 font-mono">
-                        {option.keywords.map((keyword) => keyword).join(", ")}
-                      </p>
-                      <p className="pt-2">
-                        {option.description}
-                      </p>
-                    </PopoverDescription>
-                  </PopoverContent>
-                </Popover>
-              </td>
-              <td className="items-start">{option.identifier}</td>
-            </tr>
+                  return (
+                      <td>
+                        {maybePick !== undefined && maybePick.rank !== "not picked"
+                            ? maybePick.rank
+                            : ""}
+                      </td>
+                  );
+                })}
+                <td className="pl-4">{option.score}</td>
+                <td className="text-left pl-4">
+                  <Popover>
+                    <PopoverTrigger>{option.name}</PopoverTrigger>
+                    <PopoverContent className="Popover">
+                      <PopoverHeading className='font-bold underline pb-1'>{option.name}</PopoverHeading>
+                      <PopoverDescription>
+                        <p className="border-b-2 font-mono">
+                          {option.keywords.map((keyword) => keyword).join(", ")}
+                        </p>
+                        <p className="pt-2">
+                          {option.description}
+                        </p>
+                      </PopoverDescription>
+                    </PopoverContent>
+                  </Popover>
+                </td>
+                <td className="items-start">{option.identifier}</td>
+              </tr>
           ))}
-        </tbody>
-      </table>
-    </>
+          </tbody>
+        </table>
+      </>
   );
 }
