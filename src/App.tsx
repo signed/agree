@@ -80,11 +80,22 @@ export function App() {
         <thead>
           <tr>
             {participants.map((participant) => (
-              <td onClick={() => setSorter(() => sortByParticipantRank(participant))}>
+              <td
+                onClick={() =>
+                  setSorter(() => sortByParticipantRank(participant))
+                }
+              >
                 {participant}
               </td>
             ))}
-            <td className="pl-4">Score</td>
+            <td
+              className="pl-4"
+              onClick={() => {
+                setSorter(() => scoreSorter);
+              }}
+            >
+              Score
+            </td>
             <td className="text-left pl-4">Title</td>
             <td>Identifier</td>
           </tr>
