@@ -128,10 +128,9 @@ export function App() {
                 <Popover>
                   <PopoverTrigger>{option.name}</PopoverTrigger>
                   <PopoverContent className="Popover">
-                    <PopoverHeading>{option.name}</PopoverHeading>
+                    <PopoverHeading className='font-bold underline pb-1'>{option.name}</PopoverHeading>
                     <PopoverDescription>
-                      <p className="border-b-2">
-                        keywords:{" "}
+                      <p className="border-b-2 font-mono">
                         {option.keywords.map((keyword) => keyword).join(", ")}
                       </p>
                       <p className="pt-2">
