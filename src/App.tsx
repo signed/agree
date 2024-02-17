@@ -4,6 +4,13 @@ import { Option, options } from "./options.ts";
 import { asRank, Rank, rankComparator } from "./rank.ts";
 import { useState } from "react";
 import { Comparator } from "./rank.test.ts";
+import {
+  Popover,
+  PopoverContent,
+  PopoverDescription,
+  PopoverHeading,
+  PopoverTrigger,
+} from "./popover.tsx";
 
 type Pick = {
   identifier: string;
@@ -117,7 +124,23 @@ export function App() {
                 );
               })}
               <td className="pl-4">{option.score}</td>
-              <td className="text-left pl-4">{option.name}</td>
+              <td className="text-left pl-4">
+                <Popover>
+                  <PopoverTrigger>{option.name}</PopoverTrigger>
+                  <PopoverContent className="Popover">
+                    <PopoverHeading>{option.name}</PopoverHeading>
+                    <PopoverDescription>
+                      <p className="border-b-2">
+                        keywords:{" "}
+                        {option.keywords.map((keyword) => keyword).join(", ")}
+                      </p>
+                      <p className="pt-2">
+                        {option.description}
+                      </p>
+                    </PopoverDescription>
+                  </PopoverContent>
+                </Popover>
+              </td>
               <td className="items-start">{option.identifier}</td>
             </tr>
           ))}

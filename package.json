@@ -16,6 +16,7 @@
     "nitpick": "pnpm test && pnpm typecheck && pnpm lint && pnpm format:check"
   },
   "dependencies": {
+    "@floating-ui/react": "0.26.9",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "zod": "3.22.4"
