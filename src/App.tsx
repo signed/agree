@@ -1,10 +1,7 @@
 import "./App.css";
 import { preferences } from "./preferences.ts";
 import { Option, options } from "./options.ts";
-
-type Rank = number & { __brand: "Rank" };
-
-const asRank = (i: number) => i as Rank;
+import { asRank, Rank } from "./rank.ts";
 
 type Pick = {
   identifier: string;
