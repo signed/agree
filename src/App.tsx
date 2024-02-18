@@ -111,6 +111,21 @@ function calculateTableData(filter: Filter) {
   });
 }
 
+function present<TValue>(value: TValue | null | undefined): value is TValue {
+  return value !== null && value !== undefined;
+}
+
+function exportConclusionToClipboard() {
+  const textToExport = conclusion
+    .map((identifier) =>
+      options.find((option) => (option.identifier = identifier)),
+    )
+    .filter(present)
+    .map((option) => `${option.identifier}: ${option.name}`)
+    .join("\n");
+  navigator.clipboard.writeText(textToExport).catch((e) => console.log(e));
+}
+
 export function App() {
   const [filter, setFilter] = useState<Filter>({
     runnerUps: true,
@@ -139,6 +154,13 @@ export function App() {
         }
         defaultChecked={filter.runnerUps}
       />
+      <button
+        className="pl-5"
+        disabled={conclusion.length === 0}
+        onClick={() => exportConclusionToClipboard()}
+      >
+        Copy conclusion to clipboard
+      </button>
       <table>
         <thead>
           <tr>
