@@ -118,7 +118,7 @@ function present<TValue>(value: TValue | null | undefined): value is TValue {
 function exportConclusionToClipboard() {
   const textToExport = conclusion
     .map((identifier) =>
-      options.find((option) => (option.identifier = identifier)),
+      options.find((option) => option.identifier === identifier),
     )
     .filter(present)
     .map((option) => `${option.identifier}: ${option.name}`)
