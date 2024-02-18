@@ -11,6 +11,7 @@ import {
   PopoverHeading,
   PopoverTrigger,
 } from "./popover.tsx";
+import { conclusion } from "./conclusion.ts";
 
 type Penalty = {
   identifier: string;
@@ -158,14 +159,18 @@ export function App() {
             >
               Score
             </td>
-            <td className="text-left pl-4">Title</td>
+            <td className="pl-4">Conclusion</td>
+            <td className="text-left pl-2">Title</td>
             <td>Identifier</td>
           </tr>
         </thead>
         <tbody>
           {sortedTableData.map((option, index) => {
-            const className =
-              index === 7 ? "border-b-2 border-black" : "border-b-2";
+            const inConclusion = conclusion.includes(option.identifier);
+            const className = cx(
+              inConclusion && "bg-green-100 ",
+              index === 7 ? "border-b-2 border-black" : "border-b-2",
+            );
             return (
               <tr key={option.identifier} className={className}>
                 {participants.map((participant) => {
@@ -183,7 +188,14 @@ export function App() {
                   );
                 })}
                 <td className="pl-4">{option.score}</td>
-                <td className="text-left pl-4">
+                <td className="text-center pl-4">
+                  <input
+                    type="checkbox"
+                    disabled
+                    defaultChecked={inConclusion}
+                  />
+                </td>
+                <td className="text-left pl-2">
                   <Popover>
                     <PopoverTrigger>{option.name}</PopoverTrigger>
                     <PopoverContent className="Popover">
@@ -207,4 +219,12 @@ export function App() {
       </table>
     </>
   );
+}
+
+function cx(...args: unknown[]) {
+  return args
+    .flat()
+    .filter((x) => typeof x === "string")
+    .join(" ")
+    .trim();
 }
