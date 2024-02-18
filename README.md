@@ -7,40 +7,21 @@
       "identifier": "1",
       "name": "The One",
       "description": "The best number there is.",
-      "keywords": [
-        "number",
-        "only one"
-      ]
+      "keywords": ["number", "only one"]
     },
     {
       "identifier": "2",
       "name": "Two",
       "description": "Two times the best number. What not to like.",
-      "keywords": [
-        "number"
-      ]
+      "keywords": ["number"]
     }
   ]
   ```
 - create your preferences in `inputs/preferences.json`
   ```json
   {
-    "Alice": [
-      [
-        "1"
-      ],
-      [
-        "2"
-      ]
-    ],
-    "Bob": [
-      [
-        "2"
-      ],
-      [
-        "1"
-      ]
-    ]
+    "Alice": [["1"], ["2"]],
+    "Bob": [["2"], ["1"]]
   }
   ```
 - pnpm install
