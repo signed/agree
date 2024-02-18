@@ -24,7 +24,7 @@
   ```
 - create your preferences in `inputs/preferences.json`
   ```json
-{
+  {
     "Alice": [
       [
         "1"
