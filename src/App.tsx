@@ -12,11 +12,20 @@ import {
   PopoverTrigger,
 } from "./popover.tsx";
 
-type Pick = {
+type Penalty = {
   identifier: string;
   person: string;
-  rank: Rank | "not picked";
+  rank: "not picked";
+  penalty: Score;
 };
+
+type Position = {
+  identifier: string;
+  person: string;
+  rank: Rank;
+};
+
+type Pick = Position | Penalty;
 
 type OptionWithPicks = Option & { picks: Pick[] };
 
@@ -24,7 +33,7 @@ type Score = number & { __brand: "Score" };
 
 const calculateScore = (option: OptionWithPicks): Score => {
   return option.picks.reduce((acc, pick) => {
-    const score = pick.rank === "not picked" ? 17 : pick.rank;
+    const score = pick.rank === "not picked" ? pick.penalty : pick.rank;
     return (score + acc) as Score;
   }, 0 as Score);
 };
@@ -42,11 +51,22 @@ function picksToConsider(filter: Filter, option: Option): Pick[] {
     const index = picksToConsider.findIndex(
       (identifier) => identifier === option.identifier,
     );
-    const rank = index === -1 ? "not picked" : asRank(index + 1);
+
+    if (index === -1) {
+      const totalNumberOfRankedOptionsByPerson = allPicks.flat().length + 1;
+      return {
+        person,
+        identifier: option.identifier,
+        rank: "not picked",
+        penalty: totalNumberOfRankedOptionsByPerson as Score,
+      };
+    }
+
+    const rank = asRank(index + 1);
     return {
       person,
-      rank,
       identifier: option.identifier,
+      rank,
     };
   });
 }
