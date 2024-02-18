@@ -31,9 +31,14 @@ const calculateScore = (option: OptionWithPicks): Score => {
 
 type TableData = OptionWithPicks & { score: Score };
 
-function picksToConsider(option: Option): Pick[] {
+function picksToConsider(filter: Filter, option: Option): Pick[] {
   return Object.entries(preferences).map(([person, allPicks]) => {
-    const picksToConsider = allPicks.flat();
+    const picksToConsider: string[] = [...(allPicks[0] ?? [])];
+    if (filter.runnerUps) {
+      const runnerUps = allPicks[1] ?? [];
+      picksToConsider.push(...runnerUps);
+    }
+
     const index = picksToConsider.findIndex(
       (identifier) => identifier === option.identifier,
     );
@@ -45,22 +50,6 @@ function picksToConsider(option: Option): Pick[] {
     };
   });
 }
-
-const tableData: TableData[] = options.map((option) => {
-  const picks: Pick[] = picksToConsider(option);
-  const optionWithPicks = {
-    ...option,
-    picks,
-  };
-
-  const score = calculateScore(optionWithPicks);
-
-  return {
-    ...option,
-    picks,
-    score,
-  };
-});
 
 const participants = Object.keys(preferences);
 
@@ -80,17 +69,29 @@ const sortByParticipantRank = (participant: string) => {
 };
 
 type Filter = {
-  favourites: boolean;
   runnerUps: boolean;
 };
 
-function calculateTableData(_filter: Filter) {
-  return tableData;
+function calculateTableData(filter: Filter) {
+  return options.map((option) => {
+    const picks: Pick[] = picksToConsider(filter, option);
+    const optionWithPicks = {
+      ...option,
+      picks,
+    };
+
+    const score = calculateScore(optionWithPicks);
+
+    return {
+      ...option,
+      picks,
+      score,
+    };
+  });
 }
 
 export function App() {
   const [filter, setFilter] = useState<Filter>({
-    favourites: true,
     runnerUps: true,
   });
   const [sorter, setSorter] = useState<Comparator<TableData>>(
@@ -105,10 +106,8 @@ export function App() {
       <input
         id="favourites"
         type="checkbox"
-        onChange={(e) =>
-          setFilter((cur) => ({ ...cur, favourites: e.target.checked }))
-        }
-        defaultChecked={filter.favourites}
+        defaultChecked={true}
+        disabled={true}
       />
       <label htmlFor="runner up">Runner Up: </label>
       <input
