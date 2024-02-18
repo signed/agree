@@ -79,19 +79,46 @@ const sortByParticipantRank = (participant: string) => {
   };
 };
 
+type Filter = {
+  favourites: boolean;
+  runnerUps: boolean;
+};
+
+function calculateTableData(_filter: Filter) {
+  return tableData;
+}
+
 export function App() {
+  const [filter, setFilter] = useState<Filter>({
+    favourites: true,
+    runnerUps: true,
+  });
   const [sorter, setSorter] = useState<Comparator<TableData>>(
     () => scoreSorter,
   );
 
-  const sortedTableData = tableData.sort(sorter);
+  const sortedTableData = calculateTableData(filter).sort(sorter);
 
   return (
     <>
-      <label htmlFor="shortlist">Shortlist: </label>
-      <input id="shortlist" type="checkbox" defaultChecked={true} />
+      <label htmlFor="favourites">Favourites: </label>
+      <input
+        id="favourites"
+        type="checkbox"
+        onChange={(e) =>
+          setFilter((cur) => ({ ...cur, favourites: e.target.checked }))
+        }
+        defaultChecked={filter.favourites}
+      />
       <label htmlFor="runner up">Runner Up: </label>
-      <input id="runner up" type="checkbox" defaultChecked={true} />
+      <input
+        id="runner up"
+        type="checkbox"
+        onChange={(e) =>
+          setFilter((cur) => ({ ...cur, runnerUps: e.target.checked }))
+        }
+        defaultChecked={filter.runnerUps}
+      />
       <table>
         <thead>
           <tr>
