@@ -184,6 +184,12 @@ export function App() {
       >
         Copy conclusion to clipboard
       </button>
+      <div>
+        {participants.map((participant) => (
+          <span className="pr-2">{`${participant}: ${penaltyForPerson(participant)}`}</span>
+        ))}
+      </div>
+
       <table>
         <thead>
           <tr>
