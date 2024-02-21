@@ -220,8 +220,8 @@ export function App() {
             </td>
 
             <td className="pl-4">Conclusion</td>
+            <td>Id</td>
             <td className="text-left pl-2">Title</td>
-            <td>Identifier</td>
           </tr>
         </thead>
         <tbody>
@@ -256,6 +256,7 @@ export function App() {
                     defaultChecked={inConclusion}
                   />
                 </td>
+                <td className="items-start">{option.identifier}</td>
                 <td className="text-left pl-2">
                   <Popover>
                     <PopoverTrigger>{option.name}</PopoverTrigger>
@@ -272,7 +273,6 @@ export function App() {
                     </PopoverContent>
                   </Popover>
                 </td>
-                <td className="items-start">{option.identifier}</td>
               </tr>
             );
           })}
