@@ -44,6 +44,11 @@ type TableData = OptionWithPicks & {
   interestedPersonCount: number;
 };
 
+const penaltyForPerson = (person: string): Score => {
+  const allPicks = preferences[person];
+  return (allPicks.flat().length + 1) as Score;
+};
+
 function picksToConsider(filter: Filter, option: Option): Pick[] {
   return Object.entries(preferences).map(([person, allPicks]) => {
     const picksToConsider: string[] = [...(allPicks[0] ?? [])];
@@ -57,12 +62,12 @@ function picksToConsider(filter: Filter, option: Option): Pick[] {
     );
 
     if (index === -1) {
-      const totalNumberOfRankedOptionsByPerson = allPicks.flat().length + 1;
+      const penalty = penaltyForPerson(person);
       return {
         person,
         identifier: option.identifier,
         rank: "not picked",
-        penalty: totalNumberOfRankedOptionsByPerson as Score,
+        penalty,
       };
     }
 
