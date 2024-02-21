@@ -39,7 +39,10 @@ const calculateScore = (option: OptionWithPicks): Score => {
   }, 0 as Score);
 };
 
-type TableData = OptionWithPicks & { score: Score };
+type TableData = OptionWithPicks & {
+  score: Score;
+  interestedPersonCount: number;
+};
 
 function picksToConsider(filter: Filter, option: Option): Pick[] {
   return Object.entries(preferences).map(([person, allPicks]) => {
@@ -78,6 +81,14 @@ const scoreSorter = (a: TableData, b: TableData) => {
   return a.score - b.score;
 };
 
+const interestedPersonCountSorter = (a: TableData, b: TableData) => {
+  const diff = b.interestedPersonCount - a.interestedPersonCount;
+  if (diff === 0) {
+    return scoreSorter(a, b);
+  }
+  return diff;
+};
+
 const sortByParticipantRank = (participant: string) => {
   return (a: TableData, b: TableData) => {
     const aPick = a.picks.find((pick) => pick.person === participant);
@@ -102,11 +113,18 @@ function calculateTableData(filter: Filter) {
     };
 
     const score = calculateScore(optionWithPicks);
+    const interestedPersonCount = picks.reduce((acc, cur) => {
+      if (cur.rank === "not picked") {
+        return acc;
+      }
+      return ++acc;
+    }, 0);
 
     return {
       ...option,
       picks,
       score,
+      interestedPersonCount,
     };
   });
 }
@@ -176,11 +194,20 @@ export function App() {
             <td
               className="pl-4"
               onClick={() => {
+                setSorter(() => interestedPersonCountSorter);
+              }}
+            >
+              #
+            </td>
+            <td
+              className="pl-1"
+              onClick={() => {
                 setSorter(() => scoreSorter);
               }}
             >
               Score
             </td>
+
             <td className="pl-4">Conclusion</td>
             <td className="text-left pl-2">Title</td>
             <td>Identifier</td>
@@ -209,7 +236,8 @@ export function App() {
                     </td>
                   );
                 })}
-                <td className="pl-4">{option.score}</td>
+                <td className="pl-4">{option.interestedPersonCount}</td>
+                <td className="pl-1">{option.score}</td>
                 <td className="text-center pl-4">
                   <input
                     type="checkbox"
