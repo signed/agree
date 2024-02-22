@@ -10,7 +10,7 @@ import {
   PopoverDescription,
   PopoverHeading,
   PopoverTrigger,
-} from "./popover.tsx";
+} from "./popover/popover.tsx";
 import { conclusion } from "./conclusion.ts";
 
 type Penalty = {
