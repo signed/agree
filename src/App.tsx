@@ -149,6 +149,19 @@ function exportConclusionToClipboard() {
   navigator.clipboard.writeText(textToExport).catch((e) => console.log(e));
 }
 
+function isInConclusion(option: TableData) {
+  return conclusion.includes(option.identifier);
+}
+
+const sortByConclusion = (a: TableData, b: TableData) => {
+  const aInConclusion = isInConclusion(a);
+  const bInConclusion = isInConclusion(b);
+  if (aInConclusion === bInConclusion) {
+    return interestedPersonCountSorter(a, b);
+  }
+  return aInConclusion ? -1 : 1;
+};
+
 export function App() {
   const [filter, setFilter] = useState<Filter>({
     runnerUps: true,
@@ -219,14 +232,21 @@ export function App() {
               Score
             </td>
 
-            <td className="pl-4">Conclusion</td>
+            <td
+              className="pl-4"
+              onClick={() => {
+                setSorter(() => sortByConclusion);
+              }}
+            >
+              Conclusion
+            </td>
             <td>Id</td>
             <td className="text-left pl-2">Title</td>
           </tr>
         </thead>
         <tbody>
           {sortedTableData.map((option, index) => {
-            const inConclusion = conclusion.includes(option.identifier);
+            const inConclusion = isInConclusion(option);
             const className = cx(
               inConclusion && "bg-green-100 ",
               index === 7 ? "border-b-2 border-black" : "border-b-2",
