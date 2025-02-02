@@ -217,7 +217,7 @@ export function App() {
             const inConclusion = isInConclusion(option)
             const className = cx(
               inConclusion && 'bg-green-100 ',
-              index === 7 ? 'border-b-2 border-black' : 'border-b-2',
+              index === 6 ? 'border-b-2 border-black' : 'border-b-2',
             )
             return (
               <tr key={option.identifier} className={className}>
