@@ -238,12 +238,14 @@ export function App() {
                     <PopoverContent className="Popover">
                       <PopoverHeading className="font-bold underline pb-1">{option.name}</PopoverHeading>
                       <PopoverDescription>
+                        <p className="font-bold">{option.presenter.join(', ')}</p>
                         <p className="border-b-2 font-mono">{option.keywords.map((keyword) => keyword).join(', ')}</p>
                         <p className="pt-2">{option.description}</p>
                       </PopoverDescription>
                     </PopoverContent>
                   </Popover>
                 </td>
+                <td>{option.presenter.join(", ")}</td>
               </tr>
             )
           })}
