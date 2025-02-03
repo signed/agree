@@ -43,6 +43,11 @@ const penaltyForPerson = (person: string): Score => {
   return (allPicks.flat().length + 1) as Score
 }
 
+//same penalty for all person
+const penaltyForPerson2 = (_person: string): Score => {
+  return Math.max(...Object.keys(preferences).map(penaltyForPerson)) as Score
+}
+
 function picksToConsider(filter: Filter, option: Option): Pick[] {
   return Object.entries(preferences).map(([person, allPicks]) => {
     const picksToConsider: string[] = [...(allPicks[0] ?? [])]
@@ -54,7 +59,7 @@ function picksToConsider(filter: Filter, option: Option): Pick[] {
     const index = picksToConsider.findIndex((identifier) => identifier === option.identifier)
 
     if (index === -1) {
-      const penalty = penaltyForPerson(person)
+      const penalty = penaltyForPerson2(person)
       return {
         person,
         identifier: option.identifier,
@@ -175,6 +180,7 @@ export function App() {
         {participants.map((participant) => (
           <span className="pr-2">{`${participant}: ${penaltyForPerson(participant)}`}</span>
         ))}
+        <span className="pr-2 font-bold">{`max used for all: ${penaltyForPerson2('not accessed')}`}</span>
       </div>
       <MissingOptions />
 
