@@ -6,7 +6,7 @@ const optionSchema = z.object({
   name: z.string(),
   keywords: z.array(z.string()),
   description: z.string(),
-  presenter: z.array(z.string())
+  presenter: z.array(z.string()),
 })
 export type Option = z.infer<typeof optionSchema>
 const optionsSchema = z.array(optionSchema)

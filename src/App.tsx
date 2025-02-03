@@ -1,5 +1,5 @@
 import './App.css'
-import {allPreferences, preferences} from './preferences.ts'
+import { allPreferences, preferences } from './preferences.ts'
 import { Option, options } from './options.ts'
 import { asRank, Rank, rankComparator } from './rank.ts'
 import { useState } from 'react'
@@ -176,7 +176,7 @@ export function App() {
           <span className="pr-2">{`${participant}: ${penaltyForPerson(participant)}`}</span>
         ))}
       </div>
-        <MissingOptions/>
+      <MissingOptions />
 
       <table>
         <thead>
@@ -246,7 +246,7 @@ export function App() {
                     </PopoverContent>
                   </Popover>
                 </td>
-                <td>{option.presenter.join(", ")}</td>
+                <td>{option.presenter.join(', ')}</td>
               </tr>
             )
           })}
@@ -256,15 +256,12 @@ export function App() {
   )
 }
 
-const MissingOptions = ()=> {
-  const missingOptions = allPreferences.filter(it => !options.some(option => option.identifier === it));
+const MissingOptions = () => {
+  const missingOptions = allPreferences.filter((it) => !options.some((option) => option.identifier === it))
   if (missingOptions.length === 0) {
     return null
   }
-  return (      <div className="font-bold text-red-400">
-        missing: {missingOptions.join(', ')}
-      </div>
-  );
+  return <div className="font-bold text-red-400">missing: {missingOptions.join(', ')}</div>
 }
 
 function cx(...args: unknown[]) {
