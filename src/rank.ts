@@ -14,3 +14,8 @@ export const rankComparator = (a: Rank | NotPicked, b: Rank | NotPicked) => {
 }
 
 export type NotPicked = 'not picked'
+export type Comparator<T> = (a: T, b: T) => number
+export const reverse =
+  <T>(comparator: Comparator<T>): Comparator<T> =>
+  (a: T, b: T) =>
+    comparator(a, b) * -1

@@ -1,9 +1,8 @@
 import './App.css'
 import { allPreferences, preferences } from './preferences.ts'
 import { Option, options } from './options.ts'
-import { asRank, Rank, rankComparator } from './rank.ts'
+import { asRank, Comparator, Rank, rankComparator } from './rank.ts'
 import { useState } from 'react'
-import { Comparator } from './rank.test.ts'
 import { Popover, PopoverContent, PopoverDescription, PopoverHeading, PopoverTrigger } from './popover/popover.tsx'
 import { Conclusion, conclusions, standInConclusion } from './conclusions.ts'
 
