@@ -244,7 +244,12 @@ export function App() {
                 <td className="items-start">{option.identifier}</td>
                 <td className="text-left pl-2">
                   <Popover>
-                    <PopoverTrigger>{option.name}</PopoverTrigger>
+                    <PopoverTrigger>
+                      <div className="flex-col">
+                        <div>{option.name}</div>
+                        <div className="text-left font-extralight">{option.keywords.join(', ')}</div>
+                      </div>
+                    </PopoverTrigger>
                     <PopoverContent className="Popover">
                       <PopoverHeading className="font-bold underline pb-1">{option.name}</PopoverHeading>
                       <PopoverDescription>
