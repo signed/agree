@@ -1,14 +1,15 @@
 import { z } from 'zod'
 import conclusionsJson from '../inputs/conclusions.json'
 
-const picksSchema = z.array(z.string())
+const itemsSchema = z.array(z.string())
 
 const namedConclusionSchema = z.object({
   name: z.string(),
-  picks: picksSchema,
+  items: itemsSchema,
 })
 
 const conclusionsSchema = z.array(namedConclusionSchema)
 export const conclusions = conclusionsSchema.parse(conclusionsJson)
 
-export const picks = conclusions.at(0)!.picks
+export const conclusion = conclusions.at(0) ?? { name: 'stand in', items: [] }
+export const items = conclusion.items ?? []

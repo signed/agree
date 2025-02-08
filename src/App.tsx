@@ -5,7 +5,7 @@ import { asRank, Rank, rankComparator } from './rank.ts'
 import { useState } from 'react'
 import { Comparator } from './rank.test.ts'
 import { Popover, PopoverContent, PopoverDescription, PopoverHeading, PopoverTrigger } from './popover/popover.tsx'
-import { picks } from './conclusions.ts'
+import { conclusion } from './conclusions.ts'
 
 type Penalty = {
   identifier: string
@@ -18,6 +18,10 @@ type Position = {
   identifier: string
   person: string
   rank: Rank
+}
+
+const items = () => {
+  return conclusion.items
 }
 
 type Pick = Position | Penalty
@@ -133,7 +137,7 @@ function present<TValue>(value: TValue | null | undefined): value is TValue {
 }
 
 function exportConclusionToClipboard() {
-  const optionsInConclusion = picks
+  const optionsInConclusion = items()
     .map((identifier) => options.find((option) => option.identifier === identifier))
     .filter(present)
   const optionsInConclusionAsString = optionsInConclusion
@@ -167,15 +171,15 @@ ${keywords}`
 }
 
 function isInConclusion(option: TableData) {
-  return picks.includes(option.identifier)
+  return items().includes(option.identifier)
 }
 
 const sortByConclusion = (a: TableData, b: TableData) => {
   const aInConclusion = isInConclusion(a)
   const bInConclusion = isInConclusion(b)
   if (aInConclusion === bInConclusion) {
-    const aIndex = picks.indexOf(a.identifier)
-    const bIndex = picks.indexOf(b.identifier)
+    const aIndex = items().indexOf(a.identifier)
+    const bIndex = items().indexOf(b.identifier)
     return aIndex - bIndex
   }
   return aInConclusion ? -1 : 1
@@ -200,7 +204,7 @@ export function App() {
         onChange={(e) => setFilter((cur) => ({ ...cur, runnerUps: e.target.checked }))}
         defaultChecked={filter.runnerUps}
       />
-      <button className="pl-5" disabled={picks.length === 0} onClick={() => exportConclusionToClipboard()}>
+      <button className="pl-5" disabled={items.length === 0} onClick={() => exportConclusionToClipboard()}>
         Copy conclusion to clipboard
       </button>
       <div>
