@@ -152,7 +152,9 @@ const sortByConclusion = (a: TableData, b: TableData) => {
   const aInConclusion = isInConclusion(a)
   const bInConclusion = isInConclusion(b)
   if (aInConclusion === bInConclusion) {
-    return interestedPersonCountSorter(a, b)
+    const aIndex = conclusion.indexOf(a.identifier)
+    const bIndex = conclusion.indexOf(b.identifier)
+    return aIndex - bIndex
   }
   return aInConclusion ? -1 : 1
 }
