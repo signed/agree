@@ -133,14 +133,36 @@ function present<TValue>(value: TValue | null | undefined): value is TValue {
 }
 
 function exportConclusionToClipboard() {
-  const textToExport = conclusion
+  const optionsInConclusion = conclusion
     .map((identifier) => options.find((option) => option.identifier === identifier))
     .filter(present)
+  const optionsInConclusionAsString = optionsInConclusion
     .map(
       (option, index) =>
         `${index + 1}. [${option.identifier}] ${option.name} (${option.presenter.join(', ')}) (${option.keywords.join(', ')})`,
     )
     .join('\n')
+
+  const keyWords: string[] = optionsInConclusion.flatMap((option) => option.keywords)
+
+  const grouped = keyWords.reduce((acc, cur) => {
+    let words = acc.get(cur)
+    if (words === undefined) {
+      words = []
+      acc.set(cur, words)
+    }
+    words.push(cur)
+    return acc
+  }, new Map<string, string[]>())
+
+  const keywords = Array.from(grouped)
+    .map(([key, value]) => `${key}: ${value.length}`)
+    .join('\n')
+
+  const textToExport = `${optionsInConclusionAsString}
+
+${keywords}`
+
   navigator.clipboard.writeText(textToExport).catch((e) => console.log(e))
 }
 
