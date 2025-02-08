@@ -5,7 +5,7 @@ import { asRank, Rank, rankComparator } from './rank.ts'
 import { useState } from 'react'
 import { Comparator } from './rank.test.ts'
 import { Popover, PopoverContent, PopoverDescription, PopoverHeading, PopoverTrigger } from './popover/popover.tsx'
-import { conclusion } from './conclusion.ts'
+import { picks } from './conclusions.ts'
 
 type Penalty = {
   identifier: string
@@ -133,7 +133,7 @@ function present<TValue>(value: TValue | null | undefined): value is TValue {
 }
 
 function exportConclusionToClipboard() {
-  const optionsInConclusion = conclusion
+  const optionsInConclusion = picks
     .map((identifier) => options.find((option) => option.identifier === identifier))
     .filter(present)
   const optionsInConclusionAsString = optionsInConclusion
@@ -167,15 +167,15 @@ ${keywords}`
 }
 
 function isInConclusion(option: TableData) {
-  return conclusion.includes(option.identifier)
+  return picks.includes(option.identifier)
 }
 
 const sortByConclusion = (a: TableData, b: TableData) => {
   const aInConclusion = isInConclusion(a)
   const bInConclusion = isInConclusion(b)
   if (aInConclusion === bInConclusion) {
-    const aIndex = conclusion.indexOf(a.identifier)
-    const bIndex = conclusion.indexOf(b.identifier)
+    const aIndex = picks.indexOf(a.identifier)
+    const bIndex = picks.indexOf(b.identifier)
     return aIndex - bIndex
   }
   return aInConclusion ? -1 : 1
@@ -200,7 +200,7 @@ export function App() {
         onChange={(e) => setFilter((cur) => ({ ...cur, runnerUps: e.target.checked }))}
         defaultChecked={filter.runnerUps}
       />
-      <button className="pl-5" disabled={conclusion.length === 0} onClick={() => exportConclusionToClipboard()}>
+      <button className="pl-5" disabled={picks.length === 0} onClick={() => exportConclusionToClipboard()}>
         Copy conclusion to clipboard
       </button>
       <div>
