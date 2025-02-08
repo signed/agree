@@ -136,7 +136,10 @@ function exportConclusionToClipboard() {
   const textToExport = conclusion
     .map((identifier) => options.find((option) => option.identifier === identifier))
     .filter(present)
-    .map((option) => `${option.identifier}: ${option.name}`)
+    .map(
+      (option, index) =>
+        `${index + 1}. [${option.identifier}] ${option.name} (${option.presenter.join(', ')}) (${option.keywords.join(', ')})`,
+    )
     .join('\n')
   navigator.clipboard.writeText(textToExport).catch((e) => console.log(e))
 }
