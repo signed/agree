@@ -226,6 +226,7 @@ export function App() {
           {sortedTableData.map((option, index) => {
             const inConclusion = isInConclusion(option)
             const className = cx(
+              'align-top',
               inConclusion && 'bg-green-100 ',
               index === 6 ? 'border-b-2 border-black' : 'border-b-2',
             )
@@ -241,12 +242,12 @@ export function App() {
                 <td className="text-center pl-4">
                   <input type="checkbox" disabled defaultChecked={inConclusion} />
                 </td>
-                <td className="items-start">{option.identifier}</td>
+                <td>{option.identifier}</td>
                 <td className="text-left pl-2">
                   <Popover>
                     <PopoverTrigger>
                       <div className="flex-col">
-                        <div>{option.name}</div>
+                        <div className="text-left">{option.name}</div>
                         <div className="text-left font-extralight">{option.keywords.join(', ')}</div>
                       </div>
                     </PopoverTrigger>
