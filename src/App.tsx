@@ -5,6 +5,7 @@ import { asRank, Comparator, Rank, rankComparator } from './rank.ts'
 import { useState } from 'react'
 import { Popover, PopoverContent, PopoverDescription, PopoverHeading, PopoverTrigger } from './popover/popover.tsx'
 import { Conclusion, conclusions, standInConclusion } from './conclusions.ts'
+import { FaCopy } from 'react-icons/fa6'
 
 type Penalty = {
   identifier: string
@@ -189,10 +190,16 @@ function ConclusionsView(props: ConclusionsViewProps) {
 
   return (
     <div>
-      <h1>Conclusions</h1>
-      <button disabled={items.length === 0} onClick={() => exportConclusionToClipboard(props.selected)}>
-        Copy conclusion to clipboard
-      </button>
+      <h1>
+        Conclusions
+        <button
+          className="pl-2"
+          disabled={items.length === 0}
+          onClick={() => exportConclusionToClipboard(props.selected)}
+        >
+          <FaCopy />
+        </button>
+      </h1>
 
       <ul className="list-disc list-inside">
         {conclusions.map((conclusion) => {
