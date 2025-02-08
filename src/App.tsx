@@ -5,7 +5,7 @@ import { asRank, Rank, rankComparator } from './rank.ts'
 import { useState } from 'react'
 import { Comparator } from './rank.test.ts'
 import { Popover, PopoverContent, PopoverDescription, PopoverHeading, PopoverTrigger } from './popover/popover.tsx'
-import { conclusion } from './conclusions.ts'
+import { Conclusion, conclusions, standInConclusion } from './conclusions.ts'
 
 type Penalty = {
   identifier: string
@@ -18,10 +18,6 @@ type Position = {
   identifier: string
   person: string
   rank: Rank
-}
-
-const items = () => {
-  return conclusion.items
 }
 
 type Pick = Position | Penalty
@@ -136,8 +132,8 @@ function present<TValue>(value: TValue | null | undefined): value is TValue {
   return value !== null && value !== undefined
 }
 
-function exportConclusionToClipboard() {
-  const optionsInConclusion = items()
+function exportConclusionToClipboard(conclusion: Conclusion) {
+  const optionsInConclusion = conclusion.items
     .map((identifier) => options.find((option) => option.identifier === identifier))
     .filter(present)
   const optionsInConclusionAsString = optionsInConclusion
@@ -170,22 +166,52 @@ ${keywords}`
   navigator.clipboard.writeText(textToExport).catch((e) => console.log(e))
 }
 
-function isInConclusion(option: TableData) {
-  return items().includes(option.identifier)
-}
+const isInConclusion = (conclusion: Conclusion, option: TableData) => conclusion.items.includes(option.identifier)
 
-const sortByConclusion = (a: TableData, b: TableData) => {
-  const aInConclusion = isInConclusion(a)
-  const bInConclusion = isInConclusion(b)
+const sortByConclusion = (conclusion: Conclusion) => (a: TableData, b: TableData) => {
+  const aInConclusion = isInConclusion(conclusion, a)
+  const bInConclusion = isInConclusion(conclusion, b)
   if (aInConclusion === bInConclusion) {
-    const aIndex = items().indexOf(a.identifier)
-    const bIndex = items().indexOf(b.identifier)
+    const items = conclusion.items
+    const aIndex = items.indexOf(a.identifier)
+    const bIndex = items.indexOf(b.identifier)
     return aIndex - bIndex
   }
   return aInConclusion ? -1 : 1
 }
 
+type ConclusionsViewProps = {
+  selected: Conclusion
+  onConclusionChanged?: (conclusion: Conclusion) => void
+}
+
+function ConclusionsView(props: ConclusionsViewProps) {
+  const items = props.selected.items
+
+  return (
+    <div>
+      <h1>Conclusions</h1>
+      <button disabled={items.length === 0} onClick={() => exportConclusionToClipboard(props.selected)}>
+        Copy conclusion to clipboard
+      </button>
+
+      <ul className="list-disc list-inside">
+        {conclusions.map((conclusion) => {
+          const selected = conclusion.name === props.selected.name
+          const className = cx(selected && 'font-bold')
+          return (
+            <li key={conclusion.name} className={className}>
+              <button onClick={() => props.onConclusionChanged?.(conclusion)}>{conclusion.name}</button>
+            </li>
+          )
+        })}
+      </ul>
+    </div>
+  )
+}
+
 export function App() {
+  const [conclusion, setConclusion] = useState(() => conclusions[0] ?? standInConclusion())
   const [filter, setFilter] = useState<Filter>({
     runnerUps: true,
   })
@@ -195,6 +221,7 @@ export function App() {
 
   return (
     <>
+      <ConclusionsView selected={conclusion} onConclusionChanged={setConclusion} />
       <label htmlFor="favourites">Favourites: </label>
       <input id="favourites" type="checkbox" defaultChecked={true} disabled={true} />
       <label htmlFor="runner up">Runner Up: </label>
@@ -204,9 +231,6 @@ export function App() {
         onChange={(e) => setFilter((cur) => ({ ...cur, runnerUps: e.target.checked }))}
         defaultChecked={filter.runnerUps}
       />
-      <button className="pl-5" disabled={items.length === 0} onClick={() => exportConclusionToClipboard()}>
-        Copy conclusion to clipboard
-      </button>
       <div>
         {participants.map((participant) => (
           <span className="pr-2">{`${participant}: ${penaltyForPerson(participant)}`}</span>
@@ -241,7 +265,7 @@ export function App() {
             <td
               className="pl-4"
               onClick={() => {
-                setSorter(() => sortByConclusion)
+                setSorter(() => sortByConclusion(conclusion))
               }}
             >
               Conclusion
@@ -252,7 +276,7 @@ export function App() {
         </thead>
         <tbody>
           {sortedTableData.map((option, index) => {
-            const inConclusion = isInConclusion(option)
+            const inConclusion = isInConclusion(conclusion, option)
             const className = cx(
               'align-top',
               inConclusion && 'bg-green-100 ',

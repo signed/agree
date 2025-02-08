@@ -3,13 +3,14 @@ import conclusionsJson from '../inputs/conclusions.json'
 
 const itemsSchema = z.array(z.string())
 
-const namedConclusionSchema = z.object({
+const conclusionSchema = z.object({
   name: z.string(),
   items: itemsSchema,
 })
 
-const conclusionsSchema = z.array(namedConclusionSchema)
+export type Conclusion = z.infer<typeof conclusionSchema>
+const conclusionsSchema = z.array(conclusionSchema)
+
 export const conclusions = conclusionsSchema.parse(conclusionsJson)
 
-export const conclusion = conclusions.at(0) ?? { name: 'stand in', items: [] }
-export const items = conclusion.items ?? []
+export const standInConclusion = () => ({ name: 'stand in', items: [] })
