@@ -23,6 +23,7 @@
     "zod": "3.25.30"
   },
   "devDependencies": {
+    "@eslint/js": "9.39.2",
     "@signed/prettier-config": "0.2.0",
     "@types/react": "18.2.74",
     "@types/react-dom": "18.2.23",
