@@ -288,6 +288,7 @@ export function App() {
               inConclusion && 'bg-green-100 ',
               index === 6 ? 'border-b-2 border-black' : 'border-b-2',
             )
+            const userGroups = option.userGroup.length > 0 ? '(' + option.userGroup.join(', ') + ')' : ''
             return (
               <tr key={option.identifier} className={className}>
                 {participants.map((participant) => {
@@ -305,7 +306,9 @@ export function App() {
                   <Popover>
                     <PopoverTrigger>
                       <div className="flex-col">
-                        <div className="text-left">{option.name}</div>
+                        <div className="text-left">
+                          {option.name} {userGroups}
+                        </div>
                         <div className="text-left font-extralight">{option.keywords.join(', ')}</div>
                       </div>
                     </PopoverTrigger>
@@ -319,7 +322,12 @@ export function App() {
                     </PopoverContent>
                   </Popover>
                 </td>
-                <td>{option.presenter.join(', ')}</td>
+                <td>
+                  <div className="flex-col">
+                    <div className="text-right">{option.presenter.join(', ')}</div>
+                    <div className="text-right font-extralight">{option.organisation.join(', ')}</div>
+                  </div>
+                </td>
               </tr>
             )
           })}
