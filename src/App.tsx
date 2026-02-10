@@ -132,19 +132,7 @@ function present<TValue>(value: TValue | null | undefined): value is TValue {
   return value !== null && value !== undefined
 }
 
-function exportConclusionToClipboard(conclusion: Conclusion) {
-  const optionsInConclusion = conclusion.items
-    .map((identifier) => options.find((option) => option.identifier === identifier))
-    .filter(present)
-  const optionsInConclusionAsString = optionsInConclusion
-    .map(
-      (option, index) =>
-        `${index + 1}. [${option.identifier}] ${option.name} (${option.presenter.join(', ')}) (${option.keywords.join(', ')})`,
-    )
-    .join('\n')
-
-  const keyWords: string[] = optionsInConclusion.flatMap((option) => option.keywords)
-
+function groupCountAndFormat(keyWords: string[]) {
   const grouped = keyWords.reduce((acc, cur) => {
     let words = acc.get(cur)
     if (words === undefined) {
@@ -158,10 +146,32 @@ function exportConclusionToClipboard(conclusion: Conclusion) {
   const keywords = Array.from(grouped)
     .map(([key, value]) => `${key}: ${value.length}`)
     .join('\n')
+  return keywords
+}
+
+function exportConclusionToClipboard(conclusion: Conclusion) {
+  const optionsInConclusion = conclusion.items
+    .map((identifier) => options.find((option) => option.identifier === identifier))
+    .filter(present)
+  const optionsInConclusionAsString = optionsInConclusion
+    .map(
+      (option, index) =>
+        `${index + 1}. [${option.identifier}] ${option.name} (${option.presenter.join(', ')}) (${option.keywords.join(', ')})`,
+    )
+    .join('\n')
+
+  const keywords = groupCountAndFormat(optionsInConclusion.flatMap((option) => option.keywords))
+  const organisations = groupCountAndFormat(optionsInConclusion.flatMap((option) => option.organisation))
+  const presenters = groupCountAndFormat(optionsInConclusion.flatMap((option) => option.presenter))
 
   const textToExport = `${optionsInConclusionAsString}
 
-${keywords}`
+${keywords}
+
+${organisations}
+
+${presenters}
+`
 
   navigator.clipboard.writeText(textToExport).catch((e) => console.log(e))
 }
